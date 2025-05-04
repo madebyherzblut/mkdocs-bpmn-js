@@ -97,7 +97,7 @@ The alternative text is optional and will be rendered as a link to the diagram f
 You can customize individual diagrams using query parameters in the image URL.
 
 ```markdown
-![Custom Diagram](my-diagram.bpmn?id=my-diagram&height=500px&width=100%)
+![Custom Diagram](my-diagram.bpmn?id=my-diagram&height=500px&width=100%25)
 ```
 
 | Parameter | Description                                                  | Example         |
