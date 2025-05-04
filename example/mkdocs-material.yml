@@ -1,0 +1,7 @@
+site_name: mkdocs-bpmn-js
+
+theme:
+  name: material
+
+plugins:
+  - bpmn-js

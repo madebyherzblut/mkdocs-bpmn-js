@@ -1,0 +1,14 @@
+[project]
+name = "example"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "mkdocs>=1.6.1",
+    "mkdocs-bpmn-js",
+    "mkdocs-material>=9.6.12",
+]
+
+[tool.uv.sources]
+mkdocs-bpmn-js = { path = "../", editable = true }
