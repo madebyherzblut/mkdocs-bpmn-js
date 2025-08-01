@@ -68,6 +68,18 @@ plugins:
       viewer_css: ""
 ```
 
+### Image rendering
+
+To render an image instead of an interactive viewer, set the `render` config to `image`. We recommend using [bpmn-to-image](https://github.com/bpmn-io/bpmn-to-image), but you can use any script you prefer. During rendering, the plugin will call the `image_command` and replace `$input` with the absolute path to the BPMN diagram and `$output` with a temporary cache file.
+
+For example, with the default `image_command`:
+
+```yaml
+image_command: "bpmn-to-image --no-title --no-footer $input:$output"
+```
+
+Have a look at the [example](./example/mkdocs.yml) to see how `bpmn-to-image` can be configured and used.
+
 ## Usage
 
 Add `.bpmn` files using standard Markdown image syntax:
