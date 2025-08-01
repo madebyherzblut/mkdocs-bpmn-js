@@ -1,0 +1,8 @@
+{
+  "name": "mkdocs-bpmn",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "bpmn-to-image": "^0.9.0"
+  }
+}
