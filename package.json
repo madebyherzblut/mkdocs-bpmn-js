@@ -1,0 +1,13 @@
+{
+  "name": "mkdocs-bpmn-js-dev-assets",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Manages the bpmn-js assets for mkdocs-bpmn-js",
+  "scripts": {
+    "update-assets": "node copy_assets.js"
+  },
+  "dependencies": {
+    "bpmn-js": "^18.0.0",
+    "fs-extra": "^11.2.0"
+  }
+}

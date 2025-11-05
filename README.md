@@ -24,8 +24,8 @@ You can configure the plugin by adding options under `bpmn-js` in `mkdocs.yml`.
 ```yaml
 plugins:
   - bpmn-js:
-      viewer_js: "https://unpkg.com/bpmn-js@18/dist/bpmn-navigated-viewer.production.min.js"
-      viewer_css: "https://unpkg.com/bpmn-js@18/dist/assets/bpmn-js.css"
+      viewer_js: "assets/bpmn-navigated-viewer.production.min.js"
+      viewer_css: "assets/bpmn-js.css"
       class: "mk-bpmn-js"
 ```
 
@@ -33,40 +33,25 @@ plugins:
 | ------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------- |
 | `render`            | Specify the render mode (`none`, `image`, `viewer`). | `viewer`                                                                    |
 | `class`             | CSS class applied to each diagram container.         | `mk-bpmn-js`                                                                |
-| `viewer_js`         | URL to the BPMN viewer JavaScript file.              | `https://unpkg.com/bpmn-js@18/dist/bpmn-navigated-viewer.production.min.js` |
-| `viewer_css`        | URL to the BPMN viewer CSS file.                     | `https://unpkg.com/bpmn-js@18/dist/assets/bpmn-js.css`                      |
+| `viewer_js`         | Path to the BPMN viewer JavaScript file.              | `assets/bpmn-navigated-viewer.production.min.js`                            |
+| `viewer_css`        | Path to the BPMN viewer CSS file.                     | `assets/bpmn-js.css`                                                        |
 | `viewer_initialize` | Append a script to load the diagrams.                | `True`                                                                      |
 | `image_command`     | Command to call when `render` is set to `image`.     | `bpmn-to-image --no-title --no-footer $input:$output`                       |
 
-### Local viewer assets
+### Local Viewer Assets
 
-If you prefer not to load assets from a CDN, you can host the required BPMN viewer files yourself.
+This plugin now bundles the `bpmn-js` viewer assets by default, so you don't need to rely on an external CDN or host the files manually. The files are copied to your site's `assets` directory during the build process.
 
-```bash
-mkdir -p theme/js theme/css
-curl -L https://unpkg.com/bpmn-js@18/dist/bpmn-navigated-viewer.production.min.js > theme/js/bpmn.js
-curl -L https://unpkg.com/bpmn-js@18/dist/assets/bpmn-js.css > theme/css/bpmn.css
-```
-
-Override the default theme to include your local assets by creating a custom `theme/main.html` template.
-Refer to the [MkDocs guide on customizing themes](https://www.mkdocs.org/user-guide/customizing-your-theme/#overriding-template-blocks) for more details.
-
-```html
-{% extends "base.html" %} {% block styles %} {{ super() }}
-<link rel="stylesheet" href="{{ base_url }}/css/bpmn.css" />
-{% endblock %} {% block libs %} {{ super() }}
-<script src="{{ base_url }}/js/bpmn.js"></script>
-{% endblock %}
-```
-
-Finally, disable the default CDN links by setting the plugin options to empty strings in `mkdocs.yml`:
+The default configuration points to these local files:
 
 ```yaml
 plugins:
   - bpmn-js:
-      viewer_js: ""
-      viewer_css: ""
+      viewer_js: "assets/bpmn-navigated-viewer.production.min.js"
+      viewer_css: "assets/bpmn-js.css"
 ```
+
+You can still override these paths if you wish to use a different version of `bpmn-js` or host the files in a different location.
 
 ### Image rendering
 
@@ -117,6 +102,24 @@ You can customize individual diagrams using query parameters in the image URL.
 | `id`      | Sets the HTML `id` of the viewer canvas. Useful for linking. | `id=my-diagram` |
 | `width`   | Sets the diagram width. Accepts any valid CSS width value.   | `width=100%25`  |
 | `height`  | Sets the diagram height. Accepts any valid CSS height value. | `height=300px`  |
+
+## Development
+
+This project includes the `bpmn-js` assets directly in the repository. To update the bundled assets to a new version, follow these steps:
+
+1. **Update the version in `package.json`**:
+    Modify the version number for `bpmn-js` in the `dependencies` section.
+
+2. **Run the update script**:
+    This will download the new version from npm, copy the necessary assets into the source directory, and clean up temporary files.
+
+    ```bash
+    npm install
+    npm run update-assets
+    ```
+
+3. **Commit the changes**:
+    Commit the updated `package.json`, `package-lock.json`, and the new asset files located in `src/mkdocs_bpmn_js/assets/`.
 
 ## Acknowledgments
 

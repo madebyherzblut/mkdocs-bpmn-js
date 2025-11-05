@@ -1,0 +1,67 @@
+name: Update bpmn-js Assets
+
+on:
+  workflow_dispatch: # Allow manual triggering
+  schedule:
+    - cron: "0 0 * * 1" # Run every Monday at midnight
+
+jobs:
+  update-assets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Check for new bpmn-js version
+        id: check_version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').dependencies['bpmn-js']")
+          LATEST_VERSION=$(npm view bpmn-js version)
+          echo "Current version: $CURRENT_VERSION"
+          echo "Latest version: $LATEST_VERSION"
+          if [ "$CURRENT_VERSION" != "^$LATEST_VERSION" ]; then
+            echo "NEW_VERSION_AVAILABLE=true" >> $GITHUB_OUTPUT
+            echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "NEW_VERSION_AVAILABLE=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update assets if new version is available
+        if: steps.check_version.outputs.NEW_VERSION_AVAILABLE == 'true'
+        run: |
+          # Configure git
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # Update package.json with the new version
+          npm install "bpmn-js@^${{ steps.check_version.outputs.LATEST_VERSION }}"
+
+          # Run the script to copy assets
+          npm run update-assets
+
+          # Create a new branch
+          BRANCH_NAME="chore/update-bpmn-js-v${{ steps.check_version.outputs.LATEST_VERSION }}"
+          git checkout -b $BRANCH_NAME
+
+          # Commit the changes
+          git add package.json package-lock.json src/mkdocs_bpmn_js/assets/
+          git commit -m "chore: Update bpmn-js to version ${{ steps.check_version.outputs.LATEST_VERSION }}"
+
+          # Push the changes
+          git push --set-upstream origin $BRANCH_NAME
+
+          # Create a pull request
+          gh pr create \
+            --title "chore: Update bpmn-js to version ${{ steps.check_version.outputs.LATEST_VERSION }}" \
+            --body "This PR updates the bundled bpmn-js assets to the latest version." \
+            --base main \
+            --head $BRANCH_NAME
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

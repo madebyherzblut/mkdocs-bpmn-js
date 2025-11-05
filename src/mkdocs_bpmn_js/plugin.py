@@ -15,6 +15,9 @@ from mkdocs.utils import copy_file
 log = get_plugin_logger(__name__)
 
 
+ASSETS_DIR = Path(__file__).parent / "assets"
+
+
 class BPMNPlugin(BasePlugin):
     """
     A MkDocs plugin to render BPMN diagrams using bpmn-js.
@@ -29,17 +32,11 @@ class BPMNPlugin(BasePlugin):
         ("cache_dir", config_options.Type(str, default=".bpmn-cache")),
         (
             "viewer_js",
-            config_options.Type(
-                str,
-                default="https://unpkg.com/bpmn-js@18/dist/bpmn-navigated-viewer.production.min.js",
-            ),
+            config_options.Type(str, default="assets/bpmn-navigated-viewer.production.min.js"),
         ),
         (
             "viewer_css",
-            config_options.Type(
-                str,
-                default="https://unpkg.com/bpmn-js@18/dist/assets/bpmn-js.css",
-            ),
+            config_options.Type(str, default="assets/bpmn-js.css"),
         ),
         ("viewer_initialize", config_options.Type(bool, default=True)),
         (
@@ -73,6 +70,7 @@ class BPMNPlugin(BasePlugin):
             and "$output" not in self.config["image_command"]
         ):
             raise PluginError("Missing '$output' placeholder in image_command.")
+
 
     def on_post_page(self, output, config, page, **kwargs):
         if ".bpmn" not in output:
@@ -202,6 +200,16 @@ class BPMNPlugin(BasePlugin):
         return str(html)
 
     def on_post_build(self, *, config):
+        if self.config["render"] == "viewer":
+            css_output_path = Path(config["site_dir"]) / self.config["viewer_css"]
+            js_output_path = Path(config["site_dir"]) / self.config["viewer_js"]
+            css_output_path.parent.mkdir(parents=True, exist_ok=True)
+            js_output_path.parent.mkdir(parents=True, exist_ok=True)
+            copy_file(ASSETS_DIR / "bpmn-js.css", css_output_path)
+            copy_file(
+                ASSETS_DIR / "bpmn-navigated-viewer.production.min.js", js_output_path
+            )
+
         if not self.config["render"] == "image" or not self.render_queue:
             return
 
