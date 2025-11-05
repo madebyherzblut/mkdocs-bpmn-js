@@ -12,3 +12,4 @@ plugins:
   - bpmn-js:
       # render: image
       # image_command: ./node_modules/.bin/bpmn-to-image --no-title --no-footer $input:$output
+      # show_logo: true  # Set to 'false' to disable the "Powered by bpmn.io" logo in the viewer

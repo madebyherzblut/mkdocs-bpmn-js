@@ -36,6 +36,7 @@ plugins:
 | `viewer_js`         | URL to the BPMN viewer JavaScript file.              | `https://unpkg.com/bpmn-js@18/dist/bpmn-navigated-viewer.production.min.js` |
 | `viewer_css`        | URL to the BPMN viewer CSS file.                     | `https://unpkg.com/bpmn-js@18/dist/assets/bpmn-js.css`                      |
 | `viewer_initialize` | Append a script to load the diagrams.                | `True`                                                                      |
+| `show_logo`         | Show the "Powered by bpmn.io" logo in the viewer.    | `True`                                                                      |
 | `image_command`     | Command to call when `render` is set to `image`.     | `bpmn-to-image --no-title --no-footer $input:$output`                       |
 
 ### Local viewer assets

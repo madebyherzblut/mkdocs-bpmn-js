@@ -42,6 +42,7 @@ class BPMNPlugin(BasePlugin):
             ),
         ),
         ("viewer_initialize", config_options.Type(bool, default=True)),
+        ("show_logo", config_options.Type(bool, default=True)),
         (
             "image_command",
             config_options.Type(
@@ -169,6 +170,16 @@ class BPMNPlugin(BasePlugin):
 
         if self.config["render"] == "viewer" and self.config["viewer_initialize"]:
             script = html.new_tag("script", type="text/javascript")
+            
+            # Build JavaScript code with conditional logo removal
+            logo_removal_code = ""
+            if not self.config["show_logo"]:
+                logo_removal_code = """
+                            const poweredByLogo = element.querySelector('.bjs-powered-by');
+                            if (poweredByLogo) {
+                                poweredByLogo.remove();
+                            }"""
+            
             script.string = """
                 document.addEventListener('DOMContentLoaded', async function() {
                     try {
@@ -190,12 +201,13 @@ class BPMNPlugin(BasePlugin):
                             const viewer = new BpmnJS({ container: element, ...options });
                             await viewer.importXML(xml);
                             viewer.get('canvas').zoom('fit-viewport');
+                            %s
                         }
                     } catch (err) {
                         console.error('Error rendering BPMN diagram:', err);
                     }
                 });
-            """ % (self.config["class"])
+            """ % (self.config["class"], logo_removal_code)
 
             html.body.append(script)
 
